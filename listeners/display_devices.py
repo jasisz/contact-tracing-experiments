@@ -6,7 +6,7 @@ from listeners.data import Device
 from listeners.base import EncounterListener
 
 
-class CursesEncounterListener(EncounterListener):
+class CursesDisplayDevicesListener(EncounterListener):
     def __init__(self):
         self.stdscr = curses.initscr()
         curses.noecho()
