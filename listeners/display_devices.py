@@ -7,6 +7,10 @@ from listeners.base import EncounterListener
 
 
 class CursesDisplayDevicesListener(EncounterListener):
+    """
+    Listener which just nicely prints seen devices
+    """
+
     def __init__(self):
         self.stdscr = curses.initscr()
         curses.noecho()
@@ -14,14 +18,14 @@ class CursesDisplayDevicesListener(EncounterListener):
         self.devices_dict = {}
 
     def print_devices(self, devices_list: Iterable[Device]) -> None:
-        devices_list = sorted(devices_list, key=lambda d: d.last_time)
+        devices_list = sorted(devices_list, key=lambda d: d.key)
         for index, device in enumerate(devices_list):
             last_read = device.reads[-1]
             first_read = device.reads[0]
             self.stdscr.addstr(
                 index,
                 0,
-                f"{device.key} ({device.service_data}): {last_read.rssi} (last: {last_read.time}, first: {first_read.time}, reads: {len(device.reads)})",
+                f"{device.key} ({device.service_data}): {last_read.rssi} (avg {device.last_average_rssi}) (last: {last_read.time}, first: {first_read.time}, reads: {len(device.reads)})",
             )
         self.stdscr.refresh()
 

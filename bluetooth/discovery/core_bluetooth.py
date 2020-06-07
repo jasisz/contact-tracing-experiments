@@ -48,10 +48,10 @@ class CoreBluetoothDiscovery(BluetoothDiscovery):
             .tobytes()
         ).decode("ascii")
         encounter = Encounter(
-            device_key=peripheral.identifier(),
+            device_key=str(peripheral.identifier()),
             service_data=service_data,
             time=datetime.now(),
-            rssi=rssi,
+            rssi=rssi.intValue(),
         )
         for listener in self.listeners:
             listener.new_encounter(encounter=encounter)
