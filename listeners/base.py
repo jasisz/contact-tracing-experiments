@@ -7,3 +7,6 @@ class EncounterListener(abc.ABC):
     @abc.abstractmethod
     def new_encounter(self, encounter: Encounter) -> None:
         pass
+
+    def cleanup(self):
+        pass

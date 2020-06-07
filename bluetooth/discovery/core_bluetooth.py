@@ -28,7 +28,7 @@ class CoreBluetoothDiscovery(BluetoothDiscovery):
     def start(self) -> None:
         central_manager = CBCentralManager.alloc()
         central_manager.initWithDelegate_queue_(self, None)
-        AppHelper.runConsoleEventLoop()
+        AppHelper.runConsoleEventLoop(installInterrupt=True)
 
     def centralManagerDidUpdateState_(self, manager):
         self.manager = manager
@@ -53,4 +53,5 @@ class CoreBluetoothDiscovery(BluetoothDiscovery):
             time=datetime.now(),
             rssi=rssi,
         )
-        self.listener.new_encounter(encounter=encounter)
+        for listener in self.listeners:
+            listener.new_encounter(encounter=encounter)

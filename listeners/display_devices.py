@@ -35,3 +35,9 @@ class CursesEncounterListener(EncounterListener):
             self.devices_dict[encounter.device_key] = device
         device.add_encounter(encounter=encounter)
         self.print_devices(self.devices_dict.values())
+
+    def cleanup(self):
+        curses.nocbreak()
+        self.stdscr.keypad(False)
+        curses.echo()
+        curses.endwin()

@@ -4,6 +4,8 @@ from listeners.display_devices import CursesEncounterListener
 
 listener = CursesEncounterListener()
 bluetooth_discovery = CoreBluetoothDiscovery(
-    uuid=EXPOSURE_NOTIFICATIONS_UUID, listener=listener
+    uuid=EXPOSURE_NOTIFICATIONS_UUID, listeners=[listener]
 )
+
 bluetooth_discovery.start()
+bluetooth_discovery.cleanup()
