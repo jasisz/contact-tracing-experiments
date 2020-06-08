@@ -18,17 +18,15 @@ class LinkDevicesListener(EncounterListener):
 
     def __init__(self):
         self.devices_dict = {}
-        self.found_links = set()
 
     def link_devices(self) -> None:
+        devices_to_delete = []
         for old_device in self.devices_dict.values():
             if datetime.now() - old_device.last_time < self.INACTIVE_DEVICE:
                 continue
 
+            # we rely on fact that python dict maintains insertion order so we will always link the first new device
             for device in self.devices_dict.values():
-                if old_device.key in self.found_links:
-                    continue
-
                 first_read = device.reads[0]
                 if first_read.time < old_device.last_time:
                     continue
@@ -41,10 +39,13 @@ class LinkDevicesListener(EncounterListener):
                     abs(old_device.last_average_rssi - device.first_average_rssi)
                     < self.RSSI_THRESHOLD
                 ):
-                    self.found_links.add(old_device.key)
+                    devices_to_delete.append(old_device)
                     print(
-                        f"{datetime.now()}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)} ms"
+                        f"{datetime.now()}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)}ms"
                     )
+
+        for device in devices_to_delete:
+            del self.devices_dict[device.key]
 
     def new_encounter(self, encounter: Encounter) -> None:
         try:
