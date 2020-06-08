@@ -7,17 +7,14 @@ from listeners.base import EncounterListener
 
 class LinkDevicesListener(EncounterListener):
     """
-    Listener which tries to link devices based on observed facts that when MAC is changed:
-     - old data broadcast stops
-     - there is a visible gap in packets which simply IS NOT a multiple of usual 280ms interval
+    Listener which tries to link devices based on easily observed facts that when MAC is changed:
+     - old data broadcast stops just before new one starts
      - rssi is roughly the same
     """
 
-    INTERVAL = 280
-    THRESHOLD = 20
-    RSSI_THRESHOLD = 20
+    RSSI_THRESHOLD = 10
     INACTIVE_DEVICE = timedelta(seconds=20)
-    TOO_LONG_GAP = timedelta(seconds=20)
+    TOO_LONG_GAP = timedelta(seconds=40)
 
     def __init__(self):
         self.devices_dict = {}
@@ -29,7 +26,7 @@ class LinkDevicesListener(EncounterListener):
                 continue
 
             for device in self.devices_dict.values():
-                if (device.key, old_device.key) in self.found_links:
+                if old_device.key in self.found_links:
                     continue
 
                 first_read = device.reads[0]
@@ -40,18 +37,13 @@ class LinkDevicesListener(EncounterListener):
                 if time_diff > self.TOO_LONG_GAP:
                     continue
 
-                milliseconds = time_diff.total_seconds() * 1000
-                nearest_multiple = self.INTERVAL * round(milliseconds / self.INTERVAL)
-                diff = abs(milliseconds - nearest_multiple)
-
                 if (
-                    diff > self.THRESHOLD
-                    and abs(old_device.last_average_rssi - first_read.rssi)
+                    abs(old_device.last_average_rssi - device.first_average_rssi)
                     < self.RSSI_THRESHOLD
                 ):
-                    self.found_links.add((device.key, old_device.key))
+                    self.found_links.add(old_device.key)
                     print(
-                        f"{device.key} ({device.service_data}) is likely also the {old_device.key} ({old_device.service_data})"
+                        f"{datetime.now()}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)} ms"
                     )
 
     def new_encounter(self, encounter: Encounter) -> None:
