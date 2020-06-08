@@ -12,7 +12,7 @@ class LinkDevicesListener(EncounterListener):
      - rssi is roughly the same
     """
 
-    RSSI_THRESHOLD = 10
+    RSSI_THRESHOLD = 20
     INACTIVE_DEVICE = timedelta(seconds=20)
     TOO_LONG_GAP = timedelta(seconds=40)
 
@@ -37,12 +37,14 @@ class LinkDevicesListener(EncounterListener):
 
                 if (
                     abs(old_device.last_average_rssi - device.first_average_rssi)
-                    < self.RSSI_THRESHOLD
+                    > self.RSSI_THRESHOLD
                 ):
-                    devices_to_delete.append(old_device)
-                    print(
-                        f"{datetime.now()}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)}ms"
-                    )
+                    continue
+
+                devices_to_delete.append(old_device)
+                print(
+                    f"{datetime.now()}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)}ms"
+                )
 
         for device in devices_to_delete:
             del self.devices_dict[device.key]
