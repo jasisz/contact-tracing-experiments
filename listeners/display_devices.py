@@ -31,12 +31,12 @@ class CursesDisplayDevicesListener(EncounterListener):
 
     def new_encounter(self, encounter: Encounter) -> None:
         try:
-            device = self.devices_dict[encounter.device_key]
+            device = self.devices_dict[(encounter.device_key, encounter.service_data)]
         except KeyError:
             device = Device(
                 key=encounter.device_key, service_data=encounter.service_data, reads=[]
             )
-            self.devices_dict[encounter.device_key] = device
+            self.devices_dict[(encounter.device_key, encounter.service_data)] = device
         device.add_encounter(encounter=encounter)
         self.print_devices(self.devices_dict.values())
 

@@ -49,15 +49,15 @@ class LinkDevicesListener(EncounterListener):
                 break
 
         if device_to_delete:
-            del self.devices_dict[device_to_delete.key]
+            del self.devices_dict[(device_to_delete.key, device_to_delete.service_data)]
 
     def new_encounter(self, encounter: Encounter) -> None:
         try:
-            device = self.devices_dict[encounter.device_key]
+            device = self.devices_dict[(encounter.device_key, encounter.service_data)]
         except KeyError:
             device = Device(
                 key=encounter.device_key, service_data=encounter.service_data, reads=[]
             )
-            self.devices_dict[encounter.device_key] = device
+            self.devices_dict[(encounter.device_key, encounter.service_data)] = device
         device.add_encounter(encounter=encounter)
         self.link_devices()
