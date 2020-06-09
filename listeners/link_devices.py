@@ -14,13 +14,13 @@ class LinkDevicesListener(EncounterListener):
 
     RSSI_THRESHOLD = 20
     INACTIVE_DEVICE = timedelta(seconds=20)
-    TOO_LONG_GAP = timedelta(seconds=40)
+    TOO_LONG_GAP = timedelta(seconds=20)
 
     def __init__(self):
         self.devices_dict = {}
 
     def link_devices(self) -> None:
-        devices_to_delete = []
+        device_to_delete = None
         for old_device in self.devices_dict.values():
             if datetime.now() - old_device.last_time < self.INACTIVE_DEVICE:
                 continue
@@ -41,13 +41,15 @@ class LinkDevicesListener(EncounterListener):
                 ):
                     continue
 
-                devices_to_delete.append(old_device)
+                device_to_delete = old_device
                 print(
                     f"{datetime.now()}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)}ms"
                 )
+                # do no more matching on the old device as it should be removed
+                break
 
-        for device in devices_to_delete:
-            del self.devices_dict[device.key]
+        if device_to_delete:
+            del self.devices_dict[device_to_delete.key]
 
     def new_encounter(self, encounter: Encounter) -> None:
         try:
