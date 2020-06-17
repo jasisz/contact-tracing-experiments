@@ -1,1 +1,2 @@
 pyobjc==6.2
+protobuf==3.12.2
