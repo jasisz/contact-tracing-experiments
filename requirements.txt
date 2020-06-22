@@ -1,2 +1,4 @@
 pyobjc==6.2
 protobuf==3.12.2
+pyserial==3.4
+Click==7.1.2

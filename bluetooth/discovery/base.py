@@ -5,8 +5,7 @@ from listeners.base import EncounterListener
 
 
 class BluetoothDiscovery(abc.ABC):
-    def __init__(self, uuid: str, listeners: List[EncounterListener]) -> None:
-        self.uuid = uuid
+    def __init__(self, listeners: List[EncounterListener]) -> None:
         self.listeners = listeners
 
     @abc.abstractmethod

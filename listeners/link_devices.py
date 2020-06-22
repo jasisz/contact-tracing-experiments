@@ -43,7 +43,7 @@ class LinkDevicesListener(EncounterListener):
 
                 device_to_delete = old_device
                 print(
-                    f"{datetime.now()}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)}ms"
+                    f"{first_read.time}: {old_device.key} ({old_device.service_data}) is now {device.key} ({device.service_data}) after gap of {int(time_diff.total_seconds() * 1000)}ms"
                 )
                 # do no more matching on the old device as it should be removed
                 break

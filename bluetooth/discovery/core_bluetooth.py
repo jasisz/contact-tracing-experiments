@@ -25,6 +25,8 @@ objc.loadBundleVariables(CoreBluetooth, globals(), constants)
 
 
 class CoreBluetoothDiscovery(BluetoothDiscovery):
+    UUID = "0000fd6f-0000-1000-8000-00805f9b34fb"
+
     def start(self) -> None:
         central_manager = CBCentralManager.alloc()
         central_manager.initWithDelegate_queue_(self, None)
@@ -33,7 +35,7 @@ class CoreBluetoothDiscovery(BluetoothDiscovery):
     def centralManagerDidUpdateState_(self, manager):
         self.manager = manager
         manager.scanForPeripheralsWithServices_options_(
-            [CBUUID.UUIDWithString_(self.uuid)],
+            [CBUUID.UUIDWithString_(self.UUID)],
             {CBCentralManagerScanOptionAllowDuplicatesKey: objc.YES},
         )
 
