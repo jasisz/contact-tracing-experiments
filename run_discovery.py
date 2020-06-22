@@ -36,8 +36,10 @@ def run_discovery(backend, listener):
     listener_class = LISTENERS[listener]
     bluetooth_discovery = backend_class(listeners=[listener_class()])
 
-    bluetooth_discovery.start()
-    bluetooth_discovery.cleanup()
+    try:
+        bluetooth_discovery.start()
+    finally:
+        bluetooth_discovery.cleanup()
 
 
 if __name__ == "__main__":

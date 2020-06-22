@@ -10,6 +10,7 @@ from bluetooth.discovery.data import Encounter
 class NRFBluetoothDiscovery(BluetoothDiscovery):
     UUID = "03036ffd"
     service_data = "17166ffd"
+    sniffer = None
 
     def get_baud_rates(self, interface):
         return UART.find_sniffer_baudrates(interface)
@@ -19,25 +20,25 @@ class NRFBluetoothDiscovery(BluetoothDiscovery):
         return devices
 
     def new_packet(self, notification):
+        receive_time = datetime.now()
         packet = notification.msg["packet"]
-        try:
-            payload = hexlify(bytes(packet.blePacket.payload)).decode("utf-8")
-            if self.UUID in payload:
-                encounter = Encounter(
-                    device_key=hexlify(bytes(packet.blePacket.advAddress[:6])).decode(
-                        "utf-8"
-                    ),
-                    service_data=payload[
-                        payload.index(self.service_data) + len(self.UUID) : -6
-                    ],
-                    time=datetime.now(),
-                    rssi=packet.RSSI,
-                )
-                for listener in self.listeners:
-                    listener.new_encounter(encounter=encounter)
-        except Exception:
-            # just in case - if we do fail here it stops processing
-            pass
+        if not packet.OK:
+            return
+
+        payload = hexlify(bytes(packet.blePacket.payload)).decode("utf-8")
+        if self.UUID not in payload:
+            return
+
+        encounter = Encounter(
+            device_key=hexlify(bytes(packet.blePacket.advAddress[:6])).decode("utf-8"),
+            service_data=payload[
+                payload.index(self.service_data) + len(self.UUID) : -6
+            ],
+            time=receive_time,
+            rssi=packet.RSSI,
+        )
+        for listener in self.listeners:
+            listener.new_encounter(encounter=encounter)
 
     def start(self) -> None:
         interface = self.get_interfaces()[0]
@@ -47,6 +48,12 @@ class NRFBluetoothDiscovery(BluetoothDiscovery):
         sniffer.setAdvHopSequence([37, 38, 39])
         sniffer.start()
         sniffer.scan()
+        self.sniffer = sniffer
 
         while True:
-            time.sleep(0.2)
+            time.sleep(10)
+
+    def cleanup(self):
+        super().cleanup()
+        if self.sniffer:
+            self.sniffer.doExit(join=True)
