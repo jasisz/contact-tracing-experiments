@@ -21,6 +21,7 @@ Code in package `SnifferAPI` is just copied Sniffer code from Nordic Semiconduct
 Listeners working on top of Bluetooth discovery.
 - `CursesDisplayDevicesListener` - simply displaying list of devices it sees with some stats
 - `LinkDevicesListener` - PoC of linking devices based solely on discovery data and how RPI are broadcasted
+- `LogListener` - special kind of logger which just logs encounters or devices to file
 
 ### `run_discovery`:
 You can run any combination of backend and listener by running:
@@ -32,6 +33,11 @@ and you will be prompted for backend and listener.
 You can also specify those arguments as options. Run this to see possible usage:
 ```bash
 python run_discovery.py --help
+```
+
+If you want to log encounters or devices to a file you do not need to specify listener directly but rather use it like:
+```bash
+python run_discovery.py --devices_log devices.csv --encounters_log encounters.csv
 ```
 
 Multiple listeners (as code is ready for that) might be available in future.

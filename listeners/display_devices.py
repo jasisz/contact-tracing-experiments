@@ -25,7 +25,7 @@ class CursesDisplayDevicesListener(EncounterListener):
             self.stdscr.addstr(
                 index,
                 0,
-                f"{device.key} ({device.service_data}): {last_read.rssi} (avg {device.last_average_rssi}) (last: {last_read.time}, first: {first_read.time}, reads: {len(device.reads)}, median interval: {device.time_between}, present for {device.presence})",
+                f"{device.key} ({device.service_data}): {last_read.rssi} (avg {device.last_average_rssi}) (last: {last_read.time}, first: {first_read.time}, reads: {len(device.reads)}, interval: {device.time_between}, present {device.presence})",
             )
         self.stdscr.refresh()
 
