@@ -53,7 +53,7 @@ def run_discovery(backend, listener, devices_log, encounters_log):
     listener_class = LISTENERS[listener]
     listeners = [listener_class()]
 
-    if devices_log or encounters_log:
+    if devices_log or encounters_log and not backend_class == CSVDiscovery:
         listeners.append(
             LogListener(devices_log=devices_log, encounters_log=encounters_log)
         )
