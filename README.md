@@ -14,6 +14,7 @@ Currently two simple discovery backends are implemented:
 - `CoreBluetoothDiscovery` - working on macOS, not reliable, lots of missing packets and long gaps
 - `NRFBluetoothDiscovery` - for usage with [nRF Sniffer](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Sniffer-for-Bluetooth-LE),
     much more reliable, but requires external hardware (and flashing it with regular nRF Sniffer hex as used with Wireshark)
+- `CSVDiscovery` - working with the previously stored CSV encounters log
 
 Code in package `SnifferAPI` is just copied Sniffer code from Nordic Semiconductor as it is (for convenience).
 
