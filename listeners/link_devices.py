@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from bluetooth.discovery.data import Encounter
 from listeners.data import Device
@@ -19,10 +19,10 @@ class LinkDevicesListener(EncounterListener):
     def __init__(self):
         self.devices_dict = {}
 
-    def link_devices(self) -> None:
+    def link_devices(self, encounter: Encounter) -> None:
         device_to_delete = None
         for old_device in self.devices_dict.values():
-            if datetime.now() - old_device.last_time < self.INACTIVE_DEVICE:
+            if encounter.time - old_device.last_time < self.INACTIVE_DEVICE:
                 continue
 
             # we rely on fact that python dict maintains insertion order so we will always link the first new device
@@ -60,4 +60,4 @@ class LinkDevicesListener(EncounterListener):
             )
             self.devices_dict[(encounter.device_key, encounter.service_data)] = device
         device.add_encounter(encounter=encounter)
-        self.link_devices()
+        self.link_devices(encounter=encounter)
